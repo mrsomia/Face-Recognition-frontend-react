@@ -8,11 +8,6 @@ import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import Particles from 'react-particles-js';
-import Clarifai from 'clarifai';
-
-const app = new Clarifai.App({
- apiKey: '405c1ff97b7844d699304026b11ede1d'
-});
 
 const initialState = {
   input: '',
@@ -59,10 +54,16 @@ class App extends Component {
 
   onButtonSubmit = (e) => {
     this.setState({imageUrl: this.state.input});
-    app.models.predict("a403429f2ddf4b49b307e318f00e528b",
-      this.state.input)
+    fetch ('http://localhost:3000/imageurl', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        input: this.state.input
+      })
+    })
+    .then(response => response.json())
       .then(response => {
-        if (response) {
+        if (response !== "Unable to work with api") {
           fetch ('http://localhost:3000/image', {
             method: 'put',
             headers: {'Content-Type': 'application/json'},
